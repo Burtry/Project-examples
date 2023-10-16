@@ -13,5 +13,6 @@ public class SkyApplication {
         SpringApplication.run(SkyApplication.class, args);
         log.info("启动!!!!");
 
+        log.info("text upload");
     }
 }
