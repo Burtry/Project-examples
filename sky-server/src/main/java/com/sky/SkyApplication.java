@@ -12,6 +12,7 @@ public class SkyApplication {
     public static void main(String[] args) {
         SpringApplication.run(SkyApplication.class, args);
         log.info("启动!!!!");
+        log.info("1111");
 
     }
 }
