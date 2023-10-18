@@ -72,6 +72,11 @@ public class EmployeeController {
         return Result.success();
     }
 
+    /**
+     * 新增员工
+     * @param employeeDTO 员工
+     * @return 成功信息
+     */
     @PostMapping()
     public Result insert(@RequestBody EmployeeDTO employeeDTO) {
         employeeService.insert(employeeDTO);
