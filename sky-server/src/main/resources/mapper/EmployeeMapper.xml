@@ -11,11 +11,11 @@
         </where>
         order by create_time DESC
     </select>
-    <update id="unpdate">
+    <update id="update">
         update sky_take_out.employee
         <set>
             <if test="name != null and name != ''">name = #{name}, </if>
-            <if test="username != null and usename != ''">username = #{username},</if>
+            <if test="username != null and username != ''">username = #{username},</if>
             <if test="password != null and password != ''">password = #{password},</if>
             <if test="phone != null and phone != ''">phone = #{phone}, </if>
             <if test="sex != null and sex != ''">sex = #{sex},</if>
@@ -26,4 +26,9 @@
         </set>
         where id = #{id}
     </update>
+    <select id="getById" resultType="com.sky.entity.Employee">
+        select * from sky_take_out.employee where id = #{id}
+    </select>
+
+
 </mapper>

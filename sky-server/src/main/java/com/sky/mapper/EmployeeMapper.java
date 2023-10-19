@@ -40,5 +40,12 @@ public interface EmployeeMapper {
      * 员工账号启用禁用
      * @param employee
      */
-    void unpdate(Employee employee);
+    void update(Employee employee);
+
+    /**
+     * 根据id查询员工
+     * @param id
+     * @return
+     */
+    Employee getById(Integer id);
 }
