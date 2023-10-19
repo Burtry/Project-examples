@@ -11,4 +11,19 @@
         </where>
         order by create_time DESC
     </select>
+    <update id="unpdate">
+        update sky_take_out.employee
+        <set>
+            <if test="name != null and name != ''">name = #{name}, </if>
+            <if test="username != null and usename != ''">username = #{username},</if>
+            <if test="password != null and password != ''">password = #{password},</if>
+            <if test="phone != null and phone != ''">phone = #{phone}, </if>
+            <if test="sex != null and sex != ''">sex = #{sex},</if>
+            <if test="idNumber != null and idNumber != ''">id_number = #{idNumber},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+        </set>
+        where id = #{id}
+    </update>
 </mapper>

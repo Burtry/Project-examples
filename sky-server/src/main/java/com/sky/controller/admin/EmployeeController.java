@@ -79,17 +79,36 @@ public class EmployeeController {
      */
     @PostMapping()
     @ApiOperation("新增员工")
-    public Result insert(@RequestBody EmployeeDTO employeeDTO) {
+    public Result<Object> insert(@RequestBody EmployeeDTO employeeDTO) {
         employeeService.insert(employeeDTO);
         return Result.success();
     }
 
+    /**
+     * 员工分页查询
+     * @param employeePageQueryDTO
+     * @return
+     */
     @GetMapping("/page")
     @ApiOperation("员工分页查询")
     public Result<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO) {
         log.info("分页查询员工{}" , employeePageQueryDTO);
         PageResult pageResult = employeeService.pageQuery(employeePageQueryDTO);
         return Result.success(pageResult);
+    }
+
+    /**
+     * 员工账号启用禁用
+     * @param status
+     * @param id
+     * @return
+     */
+    @ApiOperation("员工账号启用禁用")
+    @PostMapping("/status/{status}")
+    public Result startOrStop(@PathVariable Integer status, Long id) {
+        log.info("员工账号启用禁用{}{}",status,id);
+        employeeService.startOrStop(status,id);
+        return Result.success();
     }
 
 }
