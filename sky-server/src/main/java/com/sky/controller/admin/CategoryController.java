@@ -2,7 +2,7 @@ package com.sky.controller.admin;
 
 import com.sky.dto.CategoryDTO;
 import com.sky.dto.CategoryPageQueryDTO;
-import com.sky.properties.JwtProperties;
+import com.sky.entity.Category;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.CategoryService;
@@ -11,6 +11,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 /**
@@ -64,5 +66,52 @@ public class CategoryController {
         return Result.success();
     }
 
+    //TODO 不知道需不需要，先保留
+    /**
+     * 根据id查询分类
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    @ApiOperation("根据id查询分类")
+    public Result<CategoryDTO> getById(@PathVariable Integer id) {
+        CategoryDTO categoryDTO = categoryService.getById(id);
+        return Result.success(categoryDTO);
+    }
 
+
+    /**
+     * 修改分类信息
+     * @param categoryDTO
+     * @return
+     */
+    @PutMapping()
+    public Result modify(@RequestBody CategoryDTO categoryDTO) {
+        categoryService.modify(categoryDTO);
+        return Result.success();
+    }
+
+    //TODO 4
+    /**
+     * 删除分类
+     * @param id
+     * @return
+     */
+    @DeleteMapping()
+    @ApiOperation("根据id删除分类")
+    public Result delete(Long  id) {
+        categoryService.delete(id);
+        return Result.success();
+    }
+
+    /**
+     * 根据类型查询分类
+     * @param type
+     * @return
+     */
+    @GetMapping("/list")
+    public Result<List<Category>> getByType(Integer type) {
+        List<Category> list = categoryService.list(type);
+        return Result.success(list);
+    }
 }

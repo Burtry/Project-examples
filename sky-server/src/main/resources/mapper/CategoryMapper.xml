@@ -12,22 +12,33 @@
     <update id="update">
         update sky_take_out.category
         <set>
-            <if test="name != null and name != ''">name = #{name}, </if>
-            <if test="type != null"> type = #{type}</if>
-            <if test="sort != null"> sort = #{sort}</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="type != null"> type = #{type},</if>
+            <if test="sort != null"> sort = #{sort},</if>
             <if test="status != null">status = #{status},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="updateUser != null">update_user = #{updateUser},</if>
         </set>
         where id = #{id}
     </update>
-    <select id="pageQuery" resultType="com.sky.entity.Employee">
+    <select id="pageQuery" resultType="com.sky.entity.Category">
         select * from sky_take_out.category
         <where>
             <if test="name != null and name !=''">
-                name like concat('%' #{name}, '%')
+                and name like concat('%' #{name},'%')
+            </if>
+            <if test="type != null">
+                and type = #{type}
             </if>
         </where>
-        order by create_time DESC
+        order by sort asc , create_time desc
+    </select>
+    <select id="list" resultType="com.sky.entity.Category">
+        select * from sky_take_out.category
+        where status = 1
+        <if test="type != null">
+            and type = #{type}
+        </if>
+        order by sort asc,create_time desc
     </select>
 </mapper>
