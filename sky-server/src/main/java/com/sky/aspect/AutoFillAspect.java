@@ -27,7 +27,6 @@ public class AutoFillAspect {
      */
     @Pointcut("execution(* com.sky.mapper.*.*(..)) && @annotation(com.sky.annotation.AutoFill)")
     public void autoFillPointCut() {
-
     }
     /**
      * 前置通知：在通知中进行公共字段的填充
