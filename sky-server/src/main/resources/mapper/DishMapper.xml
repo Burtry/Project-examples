@@ -31,5 +31,11 @@
          #{id}
      </foreach>
     </select>
+    <delete id="deleteByIds">
+        delete from sky_take_out.dish where id in
+            <foreach collection="ids" separator="," open="(" close=")" item="id">
+                #{id}
+            </foreach>
+    </delete>
 
 </mapper>

@@ -83,6 +83,7 @@ public class DishServiceImpl implements DishService {
     public void delete(List<Long> ids) {
         //1.起售状态下的菜品不能删
         //减少访问数据库的操作,一次性请求
+        //查询起售状态的菜品
         List<Dish> Dishs = dishMapper.getByIds(ids);
         for (Dish dish : Dishs) {
             if(dish.getStatus() == StatusConstant.ENABLE) {
@@ -96,10 +97,13 @@ public class DishServiceImpl implements DishService {
         }
         //3.删除菜品
         //可以在SQL进行循环删除
-        for (Long id : ids) {
+        /*for (Long id : ids) {
             dishMapper.deleteById(id);
             //4.删除菜品对应的口味
             dishFlavorMapper.deleteByDishId(id);
-        }
+        }*/
+        //根据菜品id集合批量删除菜品和菜品口味数据
+        dishMapper.deleteByIds(ids);
+        dishFlavorMapper.deleteByDishIds(ids);
     }
 }

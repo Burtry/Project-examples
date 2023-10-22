@@ -39,7 +39,7 @@ public interface DishMapper {
     Page<DishVO> pageQuery(DishPageQueryDTO dishPageQueryDTO);
 
     /**
-     * 获得起售状态下的id列表
+     * 获得起售状态下的菜品列表
      * @param ids
      * @return
      */
@@ -51,4 +51,10 @@ public interface DishMapper {
      */
     @Delete("delete from sky_take_out.dish where id = #{id}")
     void deleteById(Long id);
+
+    /**
+     * 根据菜品id集合批量删除菜品
+     * @param ids
+     */
+    void deleteByIds(List<Long> ids);
 }
