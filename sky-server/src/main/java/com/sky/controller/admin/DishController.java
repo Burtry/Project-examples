@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/admin/dish")
 @Api("菜品相关接口")
@@ -43,6 +45,19 @@ public class DishController {
         //根据接口文档，前端需要total和records集合,所以返回PageResult。分页查询一般查询的结果是总数和数据集合
         PageResult pageResult  = dishService.page(dishPageQueryDTO);
         return Result.success(pageResult);
+    }
+
+    /**
+     * 批量删除菜品
+     * @param ids
+     * @return
+     */
+    @DeleteMapping()
+    @ApiOperation("删除菜品")
+    public Result delete(@RequestParam List<Long> ids) {
+        log.info("删除菜品{}",ids);
+        dishService.delete(ids);
+        return Result.success();
     }
 
 }

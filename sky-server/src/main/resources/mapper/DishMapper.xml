@@ -25,4 +25,11 @@
         </where>
         order by d.create_time desc
     </select>
+    <select id="getByIds" resultType="com.sky.entity.Dish">
+        select * from sky_take_out.dish where status = 1 and id in
+     <foreach collection="ids" item="id" separator="," open="(" close=")">
+         #{id}
+     </foreach>
+    </select>
+
 </mapper>
