@@ -5,6 +5,7 @@ import com.sky.annotation.AutoFill;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.entity.Setmeal;
 import com.sky.enumeration.OperationType;
+import com.sky.vo.SetmealVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -29,11 +30,11 @@ public interface SetmealMapper {
     void insert(Setmeal setmeal);
 
     /**
-     * 分页查询套餐
+     * 分页查询套餐(多表操作)
      * @param setmealPageQueryDTO
      * @return
      */
-    Page<Setmeal> pageQuery(SetmealPageQueryDTO setmealPageQueryDTO);
+    Page<SetmealVO> pageQuery(SetmealPageQueryDTO setmealPageQueryDTO);
 
     /**
      * 通过ids集合获得起售状态下的套餐
@@ -54,4 +55,13 @@ public interface SetmealMapper {
      */
     @AutoFill(OperationType.UPDATE)
     void update(Setmeal setmeal);
+
+    /**
+     * 根据套餐id查询套餐
+     * @param id
+     * @return
+     */
+    @Select("select * from sky_take_out.setmeal where id = #{id}")
+    Setmeal getById(Long id);
+
 }

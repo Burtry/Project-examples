@@ -1,8 +1,9 @@
 package com.sky.mapper;
 
 import com.sky.entity.SetmealDish;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -20,12 +21,27 @@ public interface SetmealDishMapper {
      * 保存套餐和菜品的关联关系,批量添加菜品
      * @param setmealDishes
      */
-    @Autowired
+
     void insertBatch(List<SetmealDish> setmealDishes);
 
     /**
-     * 删除关联此套餐的菜品
-     * @param setmealids
+     * 根据套餐id删除关联此套餐的菜品
+     * @param setmealId
      */
-    void deleteBySetmealId(List<Long> setmealids);
+    @Delete("delete from sky_take_out.setmeal_dish where setmeal_id = #{setmealId}")
+    void deleteBySetmealId(Long setmealId);
+
+    /**
+     * 根据套餐id查询对应菜品列表
+     * @param setmealID 套餐id
+     * @return
+     */
+    @Select("select * from sky_take_out.setmeal_dish where setmeal_id = #{setmealId}")
+    List<SetmealDish> getDishBySetmealId(Long setmealID);
+
+    /**
+     * 批量删除关联此套餐的菜品
+     * @param setmealIds
+     */
+    void deleteBySetmealIds(List<Long> setmealIds);
 }

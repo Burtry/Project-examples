@@ -15,11 +15,10 @@
             <foreach collection="setmealDishes" item="setmealDish" separator=",">
                 (#{setmealDish.setmealId}, #{setmealDish.dishId}, #{setmealDish.name}, #{setmealDish.price}, #{setmealDish.copies})
             </foreach>
-
     </insert>
-    <delete id="deleteBySetmealId">
+    <delete id="deleteBySetmealIds">
         delete from sky_take_out.setmeal_dish where setmeal_id in
-            <foreach collection="setmealids" separator="," item="setmealId" open="(" close=")">
+            <foreach collection="setmealIds" separator="," item="setmealId" open="(" close=")">
                 #{setmealId}
             </foreach>
     </delete>
