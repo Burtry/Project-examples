@@ -2,10 +2,12 @@ package com.sky.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sky.constant.MessageConstant;
 import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
+import com.sky.exception.DeletionNotAllowedException;
 import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetmealDishMapper;
 import com.sky.mapper.SetmealMapper;
@@ -68,6 +70,26 @@ import java.util.List;
         long total = page.getTotal();
         List<Setmeal> result = page.getResult();
         return new PageResult(total,result);
+
+    }
+
+    /**
+     * 批量删除套餐
+     * @param ids
+     */
+    @Override
+    @Transactional //添加事物
+    public void delete(List<Long> ids) {
+        //1.起售状态下的套餐不可删
+        //获得起售状态下的套餐列表,如果此列表没有起售状态的套餐，则可以删除
+        List<Setmeal> setmealList =setmealMapper.getByIdOfStatus(ids);
+        if(setmealList != null && !setmealList.isEmpty()) {
+            throw new DeletionNotAllowedException(MessageConstant.SETMEAL_ON_SALE);
+        }
+        //2.批量删除套餐
+        setmealMapper.deleteByIds(ids);
+        //删除套餐菜品关系表相应的数据
+        setmealDishMapper.deleteBySetmealId(ids);
 
     }
 }

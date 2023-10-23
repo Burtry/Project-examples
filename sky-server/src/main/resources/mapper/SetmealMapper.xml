@@ -23,4 +23,16 @@
         </where>
         order by create_time DESC
     </select>
+    <select id="getByIdOfStatus" resultType="com.sky.entity.Setmeal">
+        select * from sky_take_out.setmeal where status = 1 and id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
+    <delete id="deleteByIds">
+        delete from sky_take_out.setmeal where id in
+            <foreach collection="ids" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+    </delete>
 </mapper>
