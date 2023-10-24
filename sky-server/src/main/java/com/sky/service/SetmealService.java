@@ -11,7 +11,7 @@ public interface SetmealService {
 
     /**
      * 新增套餐
-     * @param setmealDTO
+     * @param setmealDTO 套餐数据传输对象
      */
     void save(SetmealDTO setmealDTO);
 
