@@ -8,10 +8,10 @@ sky:
     password: 123456
 
   alioss:
-    endpoint: oss-cn-beijing.aliyuncs.com
-    access-key-secret: loxsB5e1WVPkJ7IoNDG824482T8gDt
-    access-key-id: LTAI5tGGG3Ey8gigh9Nnv6q4
-    bucket-name: burtrytext
+    endpoint:
+    access-key-secret:
+    access-key-id:
+    bucket-name:
 
   redis:
     host: localhost
