@@ -14,4 +14,10 @@ public interface UserMapper {
      */
     @Select("select * from sky_take_out.user where openid = #{openid}")
     User getByOpenid(String openid);
+
+    /**
+     * 创建新用户
+     * @param user
+     */
+    void insert(User user);
 }
