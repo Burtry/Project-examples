@@ -9,9 +9,11 @@ import com.sky.vo.SetmealVO;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 套餐管理
@@ -24,6 +26,9 @@ public class SetmealController {
     @Autowired
     private SetmealService setmealService;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     /**
      * 新增套餐
      * @param setmealDTO
@@ -34,6 +39,8 @@ public class SetmealController {
     public Result save(@RequestBody SetmealDTO setmealDTO) {
         log.info("新增套餐");
         setmealService.save(setmealDTO);
+        String key = "setmeal_" + setmealDTO.getCategoryId();
+        clearCache(key);
         return Result.success();
     }
 
@@ -59,6 +66,7 @@ public class SetmealController {
     public Result delete(@RequestParam List<Long> ids) {
         log.info("批量删除套餐");
         setmealService.delete(ids);
+        clearCache("setmeal_*");
         return Result.success();
     }
 
@@ -73,6 +81,7 @@ public class SetmealController {
     public Result StartOrStop(@PathVariable Integer status , Long id) {
         log.info("套餐起售、停售");
         setmealService.startOrStop(status,id);
+        clearCache("setmeal_*");
         return Result.success();
     }
 
@@ -99,6 +108,16 @@ public class SetmealController {
     public Result modify(@RequestBody SetmealDTO setmealDTO) {
         log.info("修改套餐");
         setmealService.modify(setmealDTO);
+        clearCache("setmeal_*");
         return Result.success();
+    }
+
+    /**
+     * 清理缓冲数据
+     * @param pattern
+     */
+    private void clearCache(String pattern) {
+        Set keys = redisTemplate.keys(pattern);
+        redisTemplate.delete(keys);
     }
 }

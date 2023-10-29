@@ -43,6 +43,8 @@ public class JwtTokenUserInterceptor implements HandlerInterceptor {
         //1、从请求头中获取令牌
         String token = request.getHeader(jwtProperties.getUserTokenName());
 
+        //TODO 可以将令牌缓冲到Redis，设置一个过期时间，可以减少jwt校验次数
+
         //2、校验令牌
         try {
             log.info("jwt校验:{}", token);
