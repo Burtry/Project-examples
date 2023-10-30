@@ -25,14 +25,16 @@ public class ShopCartServiceImpl implements ShopCartService {
     private DishMapper dishMapper;
     @Autowired
     private SetmealMapper setmealMapper;
+
     /**
      * 添加购物车
+     *
      * @param shoppingCartDTO
      */
     @Override
     public void add(ShoppingCartDTO shoppingCartDTO) {
         ShoppingCart shoppingCart = new ShoppingCart();
-        BeanUtils.copyProperties(shoppingCartDTO,shoppingCart);
+        BeanUtils.copyProperties(shoppingCartDTO, shoppingCart);
         //获取user_id 并添加到shoppingCart中
         Long userId = BaseContext.getCurrentId();
         shoppingCart.setUserId(userId);
@@ -40,21 +42,21 @@ public class ShopCartServiceImpl implements ShopCartService {
         //1.如果购物车中存在此菜品或套餐,则执行update操作,否则新增一条数据
         List<ShoppingCart> list = shopCartMapper.list(shoppingCart);
         //如果存在了，只需将数量+1
-        if(list != null && !list.isEmpty()) {
+        if (list != null && !list.isEmpty()) {
             ShoppingCart cart = list.get(0);
             cart.setNumber(cart.getNumber() + 1);
             shopCartMapper.updateById(cart);
-        }else {
+        } else {
             //如果不存在，需要插入一条购物车数据
             //判断是菜品还是套餐
             Long dishId = shoppingCartDTO.getDishId();
-            if(dishId !=null) {
+            if (dishId != null) {
                 Dish dish = dishMapper.getById(dishId);
                 shoppingCart.setName(dish.getName());
                 shoppingCart.setImage(dish.getImage());
                 shoppingCart.setAmount(dish.getPrice());
 
-            }else {
+            } else {
                 Long setmealId = shoppingCartDTO.getSetmealId();
                 Setmeal setmeal = setmealMapper.getById(setmealId);
                 shoppingCart.setName(setmeal.getName());
@@ -71,6 +73,7 @@ public class ShopCartServiceImpl implements ShopCartService {
 
     /**
      * 查看购物车
+     *
      * @return
      */
     @Override
@@ -90,5 +93,23 @@ public class ShopCartServiceImpl implements ShopCartService {
     public void clearShoppingCart() {
         Long userId = BaseContext.getCurrentId();
         shopCartMapper.deleteById(userId);
+    }
+
+
+    /**
+     * 删除购物车中一个商品
+     *
+     * @param shoppingCartDTO
+     */
+    @Override
+    public void delete(ShoppingCartDTO shoppingCartDTO) {
+        ShoppingCart shoppingCart = new ShoppingCart();
+        BeanUtils.copyProperties(shoppingCartDTO, shoppingCart);
+        Long userId = BaseContext.getCurrentId();
+        shoppingCart.setUserId(userId);
+        List<ShoppingCart> list = shopCartMapper.list(shoppingCart);
+        ShoppingCart cart = list.get(0);
+        cart.setNumber(cart.getNumber() - 1);
+        shopCartMapper.updateById(cart);
     }
 }
