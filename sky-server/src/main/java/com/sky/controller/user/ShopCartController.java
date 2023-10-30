@@ -38,5 +38,15 @@ public class ShopCartController {
         return Result.success(list);
     }
 
+    /**
+     * 清空购物车
+     * @return
+     */
+    @DeleteMapping("clean")
+    public Result clear() {
+        shopCartService.clearShoppingCart();
+        return Result.success();
+    }
+
 
 }
