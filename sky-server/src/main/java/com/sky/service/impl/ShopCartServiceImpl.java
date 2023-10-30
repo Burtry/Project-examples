@@ -68,4 +68,18 @@ public class ShopCartServiceImpl implements ShopCartService {
 
 
     }
+
+    /**
+     * 查看购物车
+     * @return
+     */
+    @Override
+    public List<ShoppingCart> showShoppingCart() {
+        Long userId = BaseContext.getCurrentId();
+        ShoppingCart shoppingCart = ShoppingCart.builder()
+                .userId(userId)
+                .build();
+        List<ShoppingCart> list = shopCartMapper.list(shoppingCart);
+        return list;
+    }
 }
