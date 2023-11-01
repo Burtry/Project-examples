@@ -29,19 +29,21 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+
     @Autowired
     private JwtProperties jwtProperties;
     @PostMapping("/login")
     @ApiOperation("微信登录")
-    public Result<UserLoginVO> userLogin(@RequestBody UserLoginDTO userLoginDTO){
-        log.info("微信登录:{}",userLoginDTO.getCode());
+    public Result<UserLoginVO> userLogin(@RequestBody UserLoginDTO userLoginDTO) {
+        log.info("微信登录:{}", userLoginDTO.getCode());
+
         //微信登录
         User user = userService.wxLogin(userLoginDTO);
 
         //为用户生成jwt令牌
         Map<String, Object> claims = new HashMap<>();
-            //放入用户的唯一标识
-        claims.put(JwtClaimsConstant.USER_ID,user.getId());
+        //放入用户的唯一标识
+        claims.put(JwtClaimsConstant.USER_ID, user.getId());
 
         String token = JwtUtil.createJWT(jwtProperties.getUserSecretKey(), jwtProperties.getUserTtl(), claims);
 
