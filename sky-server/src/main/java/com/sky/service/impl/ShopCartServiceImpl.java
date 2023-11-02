@@ -110,5 +110,9 @@ public class ShopCartServiceImpl implements ShopCartService {
         ShoppingCart cart = list.get(0);
         cart.setNumber(cart.getNumber() - 1);
         shopCartMapper.updateById(cart);
+        if(cart.getNumber() == 0) {
+            //将这个商品从购物车中清除
+           shopCartMapper.delete(cart);
+        }
     }
 }
