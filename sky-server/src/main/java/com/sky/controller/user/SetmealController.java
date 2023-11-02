@@ -22,9 +22,6 @@ import java.util.List;
 public class SetmealController {
     @Autowired
     private SetmealService setmealService;
-/*    @Autowired
-    private RedisTemplate redisTemplate;*/
-
     /**
      * 条件查询
      *
@@ -35,23 +32,11 @@ public class SetmealController {
     @ApiOperation("根据分类id查询套餐")
     @Cacheable(cacheNames = "setmealCache", key = "#categoryId") // key: setmealCache::categoryId
     public Result<List<Setmeal>> list(Long categoryId) {
-
-/*        String key = "setmeal_" + categoryId;
-        List<Setmeal> list = (List<Setmeal>) redisTemplate.opsForValue().get(key);
-        if(list != null && !list.isEmpty()) {
-            //查到数据，直接返回
-            return Result.success(list);
-        }*/
-
-
         Setmeal setmeal = new Setmeal();
         setmeal.setCategoryId(categoryId);
         setmeal.setStatus(StatusConstant.ENABLE);
 
         List<Setmeal> list = setmealService.list(setmeal);
-
-        //将查到的数据库中的数据缓冲到Redis中
-/*        redisTemplate.opsForValue().set(key,list);*/
         return Result.success(list);
     }
 
