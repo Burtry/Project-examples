@@ -7,6 +7,7 @@ import com.sky.result.Result;
 import com.sky.service.OrderService;
 import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderSubmitVO;
+import com.sky.vo.OrderVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -39,10 +40,6 @@ public class OrderController {
         log.info("订单支付：{}", ordersPaymentDTO);
         OrderPaymentVO orderPaymentVO = orderService.payment(ordersPaymentDTO);
         log.info("生成预支付交易单：{}", orderPaymentVO);
-
-        ////模拟交易成功，修改数据库订单状态
-        //orderService.paySuccess(ordersPaymentDTO.getOrderNumber());
-        //log.info("模拟交易成功:{}",ordersPaymentDTO.getOrderNumber());
         return Result.success(orderPaymentVO);
     }
 
@@ -56,6 +53,31 @@ public class OrderController {
         PageResult pageResult = orderService.page(page,pageSize,status);
         return Result.success(pageResult);
     }
+
+    /**
+     * 查询订单详情
+     * @param id 订单id
+     * @return
+     */
+    @GetMapping("/orderDetail/{id}")
+    public Result<OrderVO> orderDetail(@PathVariable Long id){
+        log.info("根据订单id查询订单详情：id: {}",id);
+        OrderVO orderVO = orderService.getOrderDetailById(id);
+        return Result.success(orderVO);
+    }
+
+    /**
+     * 再来一单
+     * @param id
+     * @return
+     */
+    @PostMapping("/repetition/{id}")
+    public Result repetition(@PathVariable Long id) {
+        log.info("再来一单:id{}",id);
+        orderService.repetition(id);
+        return Result.success();
+    }
+
 
 
 }

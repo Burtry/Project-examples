@@ -10,7 +10,6 @@ import com.sky.dto.OrdersPaymentDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.entity.*;
 import com.sky.exception.AddressBookBusinessException;
-import com.sky.exception.OrderBusinessException;
 import com.sky.exception.ShoppingCartBusinessException;
 import com.sky.mapper.*;
 import com.sky.result.PageResult;
@@ -27,9 +26,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
+
+    public static Long orderid;
 
     @Autowired
     private OrderMapper orderMapper;
@@ -105,6 +107,7 @@ public class OrderServiceImpl implements OrderService {
                 .orderAmount(orders.getAmount())
                 .build();
 
+        orderid = orderSubmitVO.getId();
         return orderSubmitVO;
     }
 
@@ -128,17 +131,22 @@ public class OrderServiceImpl implements OrderService {
                 user.getOpenid() //微信用户的openid
         );*/
 
+        //JSONObject jsonObject = new JSONObject();
+        //if (jsonObject.getString("code") != null && jsonObject.getString("code").equals("ORDERPAID")) {
+        //    throw new OrderBusinessException("该订单已支付");
+        //}
+
         JSONObject jsonObject = new JSONObject();
-        if (jsonObject.getString("code") != null && jsonObject.getString("code").equals("ORDERPAID")) {
-            throw new OrderBusinessException("该订单已支付");
-        }
+        jsonObject.put("code","ORDERPAID");
 
         OrderPaymentVO vo = jsonObject.toJavaObject(OrderPaymentVO.class);
         vo.setPackageStr(jsonObject.getString("package"));
 
-        //点击后就支付完成生成订单，不需要手动改数据了
-        paySuccess(ordersPaymentDTO.getOrderNumber());
-
+        Integer OrderPaidStatus = Orders.PAID;
+        Integer OrderStatus = Orders.TO_BE_CONFIRMED;
+        LocalDateTime check_out_time = LocalDateTime.now();
+        orderMapper.updateStatus(OrderStatus,OrderPaidStatus,check_out_time,orderid);
+        //进行数据库订单状态更新
         return vo;
     }
 
@@ -203,7 +211,52 @@ public class OrderServiceImpl implements OrderService {
 
     }
 
+    /**
+     * 根据订单id查询订单详情
+     * @param id 订单id
+     * @return
+     */
+    @Override
+    public OrderVO getOrderDetailById(Long id) {
+        OrderVO order = orderMapper.getByOrderId(id);
 
+        // 查询该订单对应的菜品/套餐明细
+        List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(order.getId());
+        // 将该订单及其详情封装到OrderVO并返回
+        OrderVO orderVO = new OrderVO();
+        BeanUtils.copyProperties(order, orderVO);
+        orderVO.setOrderDetailList(orderDetailList);
+        return order;
+    }
+
+    /**
+     * 再来一单
+     * @param id
+     */
+    @Override
+    public void repetition(Long id) {
+        Long userId = BaseContext.getCurrentId();
+        // 根据订单id查询当前订单详情
+        List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(id);
+
+        // 将订单详情对象转换为购物车对象
+        List<ShoppingCart> shoppingCartList = orderDetailList.stream().map(x -> {
+            ShoppingCart shoppingCart = new ShoppingCart();
+
+            // 将原订单详情里面的菜品信息重新复制到购物车对象中
+            BeanUtils.copyProperties(x, shoppingCart, "id");
+            shoppingCart.setUserId(userId);
+            shoppingCart.setCreateTime(LocalDateTime.now());
+
+            return shoppingCart;
+        }).collect(Collectors.toList());
+
+        // 将购物车对象批量添加到数据库
+        shopCartMapper.insertBatch(shoppingCartList);
+
+
+
+    }
 
 
 }
