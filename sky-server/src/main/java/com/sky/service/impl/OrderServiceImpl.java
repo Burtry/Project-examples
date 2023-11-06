@@ -10,6 +10,7 @@ import com.sky.dto.OrdersPaymentDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.entity.*;
 import com.sky.exception.AddressBookBusinessException;
+import com.sky.exception.OrderBusinessException;
 import com.sky.exception.ShoppingCartBusinessException;
 import com.sky.mapper.*;
 import com.sky.result.PageResult;
@@ -131,22 +132,15 @@ public class OrderServiceImpl implements OrderService {
                 user.getOpenid() //微信用户的openid
         );*/
 
-        //JSONObject jsonObject = new JSONObject();
-        //if (jsonObject.getString("code") != null && jsonObject.getString("code").equals("ORDERPAID")) {
-        //    throw new OrderBusinessException("该订单已支付");
-        //}
-
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("code","ORDERPAID");
+        if (jsonObject.getString("code") != null && jsonObject.getString("code").equals("ORDERPAID")) {
+            throw new OrderBusinessException("该订单已支付");
+        }
 
         OrderPaymentVO vo = jsonObject.toJavaObject(OrderPaymentVO.class);
         vo.setPackageStr(jsonObject.getString("package"));
 
-        Integer OrderPaidStatus = Orders.PAID;
-        Integer OrderStatus = Orders.TO_BE_CONFIRMED;
-        LocalDateTime check_out_time = LocalDateTime.now();
-        orderMapper.updateStatus(OrderStatus,OrderPaidStatus,check_out_time,orderid);
-        //进行数据库订单状态更新
+        paySuccess(ordersPaymentDTO.getOrderNumber());
         return vo;
     }
 
@@ -169,6 +163,14 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         orderMapper.update(orders);
+
+/*        Map map = new HashMap<>();
+        map.put("type",1);
+        map.put("orderId",ordersDB.getId());
+        map.put("content","订单号:" + outTradeNo);
+
+        String jsonString = JSON.toJSONString(map);*/
+
     }
 
     /**
@@ -218,7 +220,7 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public OrderVO getOrderDetailById(Long id) {
-        OrderVO order = orderMapper.getByOrderId(id);
+        Orders order = orderMapper.gerById(id);
 
         // 查询该订单对应的菜品/套餐明细
         List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(order.getId());
@@ -226,7 +228,7 @@ public class OrderServiceImpl implements OrderService {
         OrderVO orderVO = new OrderVO();
         BeanUtils.copyProperties(order, orderVO);
         orderVO.setOrderDetailList(orderDetailList);
-        return order;
+        return orderVO;
     }
 
     /**

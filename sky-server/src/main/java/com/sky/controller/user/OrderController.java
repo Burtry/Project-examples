@@ -60,7 +60,7 @@ public class OrderController {
      * @return
      */
     @GetMapping("/orderDetail/{id}")
-    public Result<OrderVO> orderDetail(@PathVariable Long id){
+    public Result<OrderVO> orderDetail(@PathVariable("id") Long id){
         log.info("根据订单id查询订单详情：id: {}",id);
         OrderVO orderVO = orderService.getOrderDetailById(id);
         return Result.success(orderVO);
