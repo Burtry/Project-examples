@@ -62,3 +62,8 @@ sky:
     notify-url: ${sky.wechat.notify-url}
     refund-notify-url: ${sky.wechat.refund-notify-url}
 
+  shop:
+    address: ${sky.shop.address}
+
+  baidu:
+    ak: ${sky.baidu.ak}
