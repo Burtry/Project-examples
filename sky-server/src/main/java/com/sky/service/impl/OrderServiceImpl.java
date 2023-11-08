@@ -375,15 +375,13 @@ public class OrderServiceImpl implements OrderService {
 
             //支付状态修改为 退款
             orders.setPayStatus(Orders.REFUND);
+        }
 
             // 更新订单状态、取消原因、取消时间
             orders.setStatus(Orders.CANCELLED);
             orders.setCancelReason("用户取消");
             orders.setCancelTime(LocalDateTime.now());
             orderMapper.update(orders);
-        }
-
-
     }
 
     /**
