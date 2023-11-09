@@ -7,6 +7,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.xiaoymin.knife4j.core.util.CollectionUtils;
 import com.sky.constant.MessageConstant;
+import com.sky.constant.WebSendConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.*;
 import com.sky.entity.*;
@@ -251,9 +252,9 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.update(orders);
 
         Map map = new HashMap<>();
-        map.put("type",1);
-        map.put("orderId",ordersDB.getId());
-        map.put("content","订单号:" + outTradeNo);
+        map.put(WebSendConstant.TYPE,WebSendConstant.ONE);
+        map.put(WebSendConstant.ORDERID,ordersDB.getId());
+        map.put(WebSendConstant.CONTENT,"订单号:" + outTradeNo);
         String jsonString = JSON.toJSONString(map);
         webSocketServer.sendToAllClient(jsonString);
 
@@ -559,6 +560,27 @@ public class OrderServiceImpl implements OrderService {
                 .deliveryTime(LocalDateTime.now())
                 .build();
         orderMapper.update(orders);
+    }
+
+    /**
+     * 催单
+     * @param id
+     */
+    @Override
+    public void reminder(Long id) {
+        // 根据id查询订单
+        Orders ordersDB = orderMapper.getById(id);
+
+        // 校验订单是否存在，并且状态为4
+        if (ordersDB == null) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        Map map = new HashMap();
+        map.put(WebSendConstant.TYPE,WebSendConstant.TWO);  //2客户催单
+        map.put(WebSendConstant.ORDERID,id);
+        map.put(WebSendConstant.CONTENT,"订单号：" + ordersDB.getNumber());
+        String jsonString = JSONObject.toJSONString(map);
+        webSocketServer.sendToAllClient(jsonString);
     }
 
 }
