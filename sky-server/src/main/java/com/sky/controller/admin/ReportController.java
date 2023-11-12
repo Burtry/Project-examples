@@ -1,9 +1,7 @@
 package com.sky.controller.admin;
 
 import com.sky.result.Result;
-import com.sky.service.OrderService;
 import com.sky.service.ReportService;
-import com.sky.service.UserService;
 import com.sky.vo.OrderReportVO;
 import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
@@ -23,12 +21,6 @@ public class ReportController {
 
     @Autowired
     private ReportService reportService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private OrderService orderService;
 
     /**
      * 营业额统计
@@ -57,7 +49,7 @@ public class ReportController {
             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end
     ) {
         log.info("用户数据统计");
-        return Result.success(userService.getUserStatistics(begin,end));
+        return Result.success(reportService.getUserStatistics(begin,end));
     }
 
     /**
@@ -72,7 +64,7 @@ public class ReportController {
             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end
     ) {
         log.info("订单统计");
-        return Result.success(orderService.getOrdersStatistics(begin,end));
+        return Result.success(reportService.getOrdersStatistics(begin,end));
     }
 
 }

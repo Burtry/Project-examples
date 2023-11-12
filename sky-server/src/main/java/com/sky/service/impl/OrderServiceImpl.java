@@ -19,19 +19,19 @@ import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.utils.HttpClientUtil;
 import com.sky.utils.WeChatPayUtil;
-import com.sky.vo.*;
+import com.sky.vo.OrderPaymentVO;
+import com.sky.vo.OrderStatisticsVO;
+import com.sky.vo.OrderSubmitVO;
+import com.sky.vo.OrderVO;
 import com.sky.websocket.WebSocketServer;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,8 +41,6 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class OrderServiceImpl implements OrderService {
-
-    /*public static Long orderid;*/
 
     @Value("${sky.shop.address}")
     private String shopAddress;
@@ -583,77 +581,5 @@ public class OrderServiceImpl implements OrderService {
         webSocketServer.sendToAllClient(jsonString);
     }
 
-    /**
-     * 根据某一时间段来统计用户数量
-     * @param begin 开始时间
-     * @param end 结束时间
-     * @return
-     */
-    @Override
-    public OrderReportVO getOrdersStatistics(LocalDate begin, LocalDate end) {
-        //构建dateList字符串对象
-        List<LocalDate> dateList = new ArrayList<>();
-        dateList.add(begin);
-        while (!begin.equals(end)) {
-            begin = begin.plusDays(1);
-            dateList.add(begin);
-        }
-        String stringDateList = StringUtils.join(dateList, ",");
-
-
-        //每日订单数
-        List<Integer> orderCountList = new ArrayList<>();
-
-        //每日有效订单数
-        List<Integer> validOrderCountList = new ArrayList<>();
-
-        for (LocalDate date : dateList) {
-            //构建每日订单数
-            LocalDateTime beginTime = LocalDateTime.of(date, LocalTime.MIN);
-            LocalDateTime endTime = LocalDateTime.of(date, LocalTime.MAX);
-            Integer orderCount = getOrderCount(beginTime, endTime, null);
-            //构建每日有效订单数
-            Integer validOrderCount = getOrderCount(beginTime, endTime, Orders.COMPLETED);
-
-            orderCountList.add(orderCount);
-            validOrderCountList.add(validOrderCount);
-        }
-        //构建一定时间区间内的订单总数
-        Integer totalOrderCount = orderCountList.stream().reduce(Integer::sum).get();
-        //构建一定时间区间内的有效订单总数
-        Integer validOrderCount = validOrderCountList.stream().reduce(Integer::sum).get();
-        //订单完成率
-
-        Double orderCompletionRate = 0.0;
-        if(totalOrderCount != 0) {
-            orderCompletionRate =validOrderCount.doubleValue() / totalOrderCount;
-        }
-
-        return OrderReportVO.builder()
-                .dateList(stringDateList)
-                .orderCountList(StringUtils.join(orderCountList, ","))
-                .validOrderCountList(StringUtils.join(validOrderCountList, ","))
-                .totalOrderCount(totalOrderCount)
-                .validOrderCount(validOrderCount)
-                .orderCompletionRate(orderCompletionRate)
-                .build();
-    }
-
-    /**
-     * 根据条件统计订单数量
-     * @param begin
-     * @param end
-     * @param status
-     * @return
-     */
-    private Integer getOrderCount(LocalDateTime begin, LocalDateTime end, Integer status) {
-
-        Map map = new HashMap();
-        map.put("end", end);
-        map.put("begin", begin);
-        map.put("status", status);
-
-        return orderMapper.getByMap(map);
-    }
 
 }
