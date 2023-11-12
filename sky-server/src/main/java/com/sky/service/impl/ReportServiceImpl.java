@@ -114,7 +114,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     /**
-     * 根据某一时间段来统计用户数量
+     * 根据某一时间段来统计订单数量
      * @param begin 开始时间
      * @param end 结束时间
      * @return
