@@ -23,4 +23,5 @@ public interface UserService {
      * @return
      */
     UserReportVO getUserStatistics(LocalDate begin, LocalDate end);
+
 }

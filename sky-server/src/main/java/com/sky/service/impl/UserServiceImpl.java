@@ -125,4 +125,5 @@ public class UserServiceImpl implements UserService {
                 .newUserList(StringUtils.join(newUserList,","))
                 .build();
     }
+
 }

@@ -1,8 +1,10 @@
 package com.sky.controller.admin;
 
 import com.sky.result.Result;
+import com.sky.service.OrderService;
 import com.sky.service.ReportService;
 import com.sky.service.UserService;
+import com.sky.vo.OrderReportVO;
 import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +26,9 @@ public class ReportController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private OrderService orderService;
 
     /**
      * 营业额统计
@@ -53,6 +58,21 @@ public class ReportController {
     ) {
         log.info("用户数据统计");
         return Result.success(userService.getUserStatistics(begin,end));
+    }
+
+    /**
+     * 根据某一时间段来统计用户数量
+     * @param begin 开始时间
+     * @param end 结束时间
+     * @return
+     */
+    @GetMapping("/ordersStatistics")
+    public Result<OrderReportVO> ordersStatistics(
+            @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate begin,
+            @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end
+    ) {
+        log.info("订单统计");
+        return Result.success(orderService.getOrdersStatistics(begin,end));
     }
 
 }
