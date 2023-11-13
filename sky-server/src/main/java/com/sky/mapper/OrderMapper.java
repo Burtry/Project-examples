@@ -82,4 +82,11 @@ public interface OrderMapper {
      */
     List<GoodsSalesDTO> getSalesTop10(LocalDateTime begin, LocalDateTime end);
 
+    /**
+     * 根据条件统计数量
+     * @param map
+     * @return
+     */
+    Integer countByMap(Map map);
+
 }
