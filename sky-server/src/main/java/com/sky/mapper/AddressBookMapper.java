@@ -54,4 +54,5 @@ public interface AddressBookMapper {
     @Delete("delete from sky_take_out.address_book where id = #{id}")
     void deleteById(Long id);
 
+
 }
